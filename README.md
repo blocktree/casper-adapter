@@ -1,6 +1,6 @@
-# metaverse-adapter
+# casper-adapter
 
-metaverse-adapter适配了openwallet.AssetsAdapter接口，给应用提供了底层的区块链协议支持。
+casper-adapter适配了openwallet.AssetsAdapter接口，给应用提供了底层的区块链协议支持。
 
 ## 如何测试
 
