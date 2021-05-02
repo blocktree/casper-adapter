@@ -47,7 +47,7 @@ func TestWalletManager_GetWalletInfo(t *testing.T) {
 
 	tm := testInitWalletManager()
 
-	wallet, err := tm.GetWalletInfo(testApp, "W89u9bj31VPFqWNATruUTF2sFiUxCbCsUt")
+	wallet, err := tm.GetWalletInfo(testApp, "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN")
 	if err != nil {
 		log.Error("unexpected error:", err)
 		return
@@ -76,7 +76,7 @@ func TestWalletManager_CreateAssetsAccount(t *testing.T) {
 
 	tm := testInitWalletManager()
 
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
 	account := &openwallet.AssetsAccount{Alias: "mainnetCSPR", WalletID: walletID, Required: 1, Symbol: "CSPR", IsTrust: true}
 	account, address, err := tm.CreateAssetsAccount(testApp, walletID, "12345678", account, nil)
 	if err != nil {
@@ -94,7 +94,7 @@ func TestWalletManager_GetAssetsAccountList(t *testing.T) {
 
 	tm := testInitWalletManager()
 
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
 	list, err := tm.GetAssetsAccountList(testApp, walletID, 0, 10000000)
 	if err != nil {
 		log.Error("unexpected error:", err)
@@ -113,9 +113,9 @@ func TestWalletManager_CreateAddress(t *testing.T) {
 
 	tm := testInitWalletManager()
 
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
-	accountID := "JCw25nu4iBUwJopheg1ynp5sH7Wu4tRWxstWAfpaECMR"
-	//accountID := "4A8vP41Hh6zqYrcMB4dyx28W2PgzBKQitVrJoEp5iUtZ"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
+	//accountID := "5bjerWYdMiSP8t6guHhu96X9XFCP8S6hDQJRCnJbzEh7"
+	accountID := "GYtwYMnxxAPhuAasvpRmy8DrJcdipAn84w1NvyYBtK1N"
 	address, err := tm.CreateAddress(testApp, walletID, accountID, 9)
 	if err != nil {
 		log.Error(err)
@@ -133,16 +133,16 @@ func TestWalletManager_GetAddressList(t *testing.T) {
 
 	tm := testInitWalletManager()
 
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
-	//accountID := "JCw25nu4iBUwJopheg1ynp5sH7Wu4tRWxstWAfpaECMR"
-	accountID := "4A8vP41Hh6zqYrcMB4dyx28W2PgzBKQitVrJoEp5iUtZ"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
+	//accountID := "5bjerWYdMiSP8t6guHhu96X9XFCP8S6hDQJRCnJbzEh7"
+	accountID := "GYtwYMnxxAPhuAasvpRmy8DrJcdipAn84w1NvyYBtK1N"
 	list, err := tm.GetAddressList(testApp, walletID, accountID, 0, -1, false)
 	if err != nil {
 		log.Error("unexpected error:", err)
 		return
 	}
 	for _, w := range list {
-		fmt.Printf("%s\n", w.Address)
+		fmt.Printf("%+v\n", w)
 	}
 	log.Info("address count:", len(list))
 

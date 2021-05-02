@@ -182,9 +182,9 @@ func (bs *BlockScanner) ScanBlockTask() {
 	}
 
 	//重扫前N个块，为保证记录找到
-	for i := currentHeight - bs.RescanLastBlockCount; i <= currentHeight; i++ {
-		bs.scanBlock(i)
-	}
+	//for i := currentHeight - bs.RescanLastBlockCount; i <= currentHeight; i++ {
+	//	bs.scanBlock(i)
+	//}
 
 	//重扫失败区块
 	bs.RescanFailedRecord()
@@ -347,25 +347,25 @@ func (bs *BlockScanner) ExtractTransaction(tx *Transfer, blockTime int64, scanTa
 	targetResult1 := scanTargetFunc(openwallet.ScanTargetParam{
 		ScanTarget:     from,
 		Symbol:         bs.wm.Symbol(),
-		ScanTargetType: openwallet.ScanTargetTypeAccountAddress,
+		ScanTargetType: openwallet.ScanTargetTypeAddressMemo,
 	})
 	//订阅地址为交易单中的接收者
 	targetResult2 := scanTargetFunc(openwallet.ScanTargetParam{
 		ScanTarget:     to,
 		Symbol:         bs.wm.Symbol(),
-		ScanTargetType: openwallet.ScanTargetTypeAccountAddress,
+		ScanTargetType: openwallet.ScanTargetTypeAddressMemo,
 	})
 
 	//相同账户
 	if targetResult1.SourceKey == targetResult2.SourceKey && len(targetResult1.SourceKey) > 0 && len(targetResult2.SourceKey) > 0 {
-		bs.InitExtractResult(targetResult1.SourceKey, tx, &result, 0)
+		bs.InitExtractResult(&targetResult1, &targetResult2, tx, &result, 0)
 	} else {
 		if targetResult1.Exist {
-			bs.InitExtractResult(targetResult1.SourceKey, tx, &result, 1)
+			bs.InitExtractResult(&targetResult1, nil, tx, &result, 1)
 		}
 
 		if targetResult2.Exist {
-			bs.InitExtractResult(targetResult2.SourceKey, tx, &result, 2)
+			bs.InitExtractResult(&targetResult2, nil, tx, &result, 2)
 		}
 	}
 
@@ -374,23 +374,54 @@ func (bs *BlockScanner) ExtractTransaction(tx *Transfer, blockTime int64, scanTa
 }
 
 //InitExtractResult optType = 0: 输入输出提取，1: 输入提取，2：输出提取
-func (bs *BlockScanner) InitExtractResult(sourceKey string, tx *Transfer, result *ExtractResult, optType int64) {
+func (bs *BlockScanner) InitExtractResult(source1 *openwallet.ScanTargetResult, source2 *openwallet.ScanTargetResult, tx *Transfer, result *ExtractResult, optType int64) {
 
-	txExtractData := result.extractData[sourceKey]
+	txExtractData := result.extractData[source1.SourceKey]
 	if txExtractData == nil {
 		txExtractData = &openwallet.TxExtractData{}
 	}
 
 	status := "1"
 	reason := ""
+	from := ""
+	to := ""
 
 	coin := openwallet.Coin{
 		Symbol:     bs.wm.Symbol(),
 		IsContract: false,
 	}
 
-	from := tx.From
-	to := tx.To
+	if optType == 0 {
+		addr1, ok1 := source1.TargetInfo.(*openwallet.Address)
+		if ok1 {
+			from = addr1.Address
+		} else {
+			from = tx.From
+		}
+
+		addr2, ok1 := source2.TargetInfo.(*openwallet.Address)
+		if ok1 {
+			to = addr2.Address
+		} else {
+			to = tx.To
+		}
+	} else if optType == 1 {
+		addr1, ok1 := source1.TargetInfo.(*openwallet.Address)
+		if ok1 {
+			from = addr1.Address
+		} else {
+			from = tx.From
+		}
+		to = tx.To
+	} else if optType == 2 {
+		addr2, ok2 := source1.TargetInfo.(*openwallet.Address)
+		if ok2 {
+			to = addr2.Address
+		} else {
+			to = tx.To
+		}
+		from = tx.From
+	}
 
 	transx := &openwallet.Transaction{
 		Fees:        "0",
@@ -413,24 +444,22 @@ func (bs *BlockScanner) InitExtractResult(sourceKey string, tx *Transfer, result
 
 	txExtractData.Transaction = transx
 	if optType == 0 {
-		bs.extractTxInput(tx, txExtractData)
-		bs.extractTxOutput(tx, txExtractData)
+		bs.extractTxInput(tx, from, txExtractData)
+		bs.extractTxOutput(tx, to, txExtractData)
 	} else if optType == 1 {
-		bs.extractTxInput(tx, txExtractData)
+		bs.extractTxInput(tx, from, txExtractData)
 	} else if optType == 2 {
-		bs.extractTxOutput(tx, txExtractData)
+		bs.extractTxOutput(tx, to, txExtractData)
 	}
 
-	result.extractData[sourceKey] = txExtractData
+	result.extractData[source1.SourceKey] = txExtractData
 }
 
 //extractTxInput 提取交易单输入部分,无需手续费，所以只包含1个TxInput
-func (bs *BlockScanner) extractTxInput(trx *Transfer, txExtractData *openwallet.TxExtractData) {
+func (bs *BlockScanner) extractTxInput(trx *Transfer, from string, txExtractData *openwallet.TxExtractData) {
 
 	tx := txExtractData.Transaction
 	coin := tx.Coin
-
-	from := trx.From
 
 	//主网from交易转账信息，第一个TxInput
 	txInput := &openwallet.TxInput{}
@@ -449,12 +478,10 @@ func (bs *BlockScanner) extractTxInput(trx *Transfer, txExtractData *openwallet.
 }
 
 //extractTxOutput 提取交易单输入部分,只有一个TxOutPut
-func (bs *BlockScanner) extractTxOutput(trx *Transfer, txExtractData *openwallet.TxExtractData) {
+func (bs *BlockScanner) extractTxOutput(trx *Transfer, to string, txExtractData *openwallet.TxExtractData) {
 
 	tx := txExtractData.Transaction
 	coin := tx.Coin
-
-	to := trx.To
 
 	//主网to交易转账信息,只有一个TxOutPut
 	txOutput := &openwallet.TxOutPut{}
@@ -570,7 +597,7 @@ func (bs *BlockScanner) GetBalanceByAddress(address ...string) ([]*openwallet.Ba
 
 	addrBalanceArr := make([]*openwallet.Balance, 0)
 	for _, a := range address {
-		balance, err := bs.wm.GetAccountBalance(stateRootHash, a)
+		balance, err := bs.wm.GetAccountBalance(stateRootHash, bs.wm.AddressToHash(a))
 		if err == nil {
 			obj := &openwallet.Balance{
 				Symbol:           bs.wm.Symbol(),

@@ -76,7 +76,7 @@ func TestWalletManager_GetBlockByHeight(t *testing.T) {
 }
 
 func TestWalletManager_GetBlockByHash(t *testing.T) {
-	block, err := tw.GetBlockByHash("b1b42ef0e8938ec006a579785edd06be7ff3fe243064e631a603b66da3d2c90c")
+	block, err := tw.GetBlockByHash("c3e9328e1d4a88e6e31facc7da49a50af9b9a30da25825ec0cf63b9147be5600")
 	if err != nil {
 		t.Errorf("GetBlockByHash failed, err: %v", err)
 		return
@@ -141,7 +141,7 @@ func TestPublicKeyToHash(t *testing.T) {
 }
 
 func TestWalletManager_GetBlockTransfers(t *testing.T) {
-	transfers, err := tw.GetBlockTransfers(29541)
+	transfers, err := tw.GetBlockTransfers(20228)
 	if err != nil {
 		t.Errorf("GetBlockTransfers failed, err: %v", err)
 		return
@@ -156,10 +156,10 @@ func TestWalletManager_TransferDeploy(t *testing.T) {
 
 	privateKey, _ := hex.DecodeString("")
 	senderKey := "96377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475"
-	//recipientKey := PublicKeyToHash("8543cf28d54200d36842679074575ef714d5562341b8a59f0d63ad4465c11365", ED25519_TAG)
-	recipientKey := "8543cf28d54200d36842679074575ef714d5562341b8a59f0d63ad4465c11365"
+	recipientKey := tw.AddressToHash("01538a824321867eebcf8506a5dc109f6cdf8abe340f2472c12d9015f24c83614c")
+	//recipientKey := "8543cf28d54200d36842679074575ef714d5562341b8a59f0d63ad4465c11365"
 	paymentAmount := "10000"
-	transferAmount := "87000000000"
+	transferAmount := "100000000000"
 	id := "1"
 
 	deploy, err := tw.MakeTransferDeploy(senderKey, recipientKey, transferAmount, paymentAmount, id, 0)
@@ -210,9 +210,14 @@ func TestWalletManager_TransferDeploy(t *testing.T) {
 }
 
 func TestWalletManager_GetDeployInfo(t *testing.T) {
-	_, err := tw.GetDeployInfo("78188bc788837cb1aa38689cd0271086bb9a99971380a0bf46382b863c33e133")
+	_, err := tw.GetDeployInfo("089fc99f6100b095cc44b12bfd67f9b543f0cbce98b84123742b2e0781425115")
 	if err != nil {
 		t.Errorf("GetDeployInfo failed, err: %v", err)
 		return
 	}
+}
+
+func TestWalletManager_AddressToHash(t *testing.T) {
+	hash := tw.AddressToHash("0196377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475")
+	log.Infof("hash: %s", hash)
 }

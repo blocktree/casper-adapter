@@ -119,27 +119,29 @@ func testSubmitTransactionStep(tm *openw.WalletManager, rawTx *openwallet.RawTra
 func TestTransfer(t *testing.T) {
 
 	addrs := []string{
-		"29d6ad902595c7a85afa41f945c67086b3024193caf2016f62b7a0c1b1beffa0",
-		"2b146326b099434f238909f655f201d563d18c0bf50ca2ca2bac69c84a33d31b",
-		"4f7ed7f92490f066cd9d3faf67f0fc61a2984cc7d11196be063cd5f7c78cb39e",
-		"538991023a45d34a72f12d98d5b5cf49db4b40318a898456603bbce125dcebce",
-		"7a45383cc567fd97d283579106647a36c3cde7887b841b995e95536434a42f0b",
-		"9d5a945701032fe2d6a216822f3de6a78db8349a9361eda8ed08bd045d433076",
-		"b1c94337da835fe0c8e4dc0fc1eb92a90e90c138536ba5e94668b1213754a30a",
-		"cec63330dd793889d3583a97e50534897d4bea2fab75434c4c9e0a4428b0f8e3",
-		"ee70a68321e96c91c21327acf0c207d4c34aef35b4faff05834e984c1ad473bf",
-		"f94cb9f36ca75e37b21bc5292dd23f9b5839f3b1b15a11d60732c9282aec7297",
+		//"0114dad099b351fad3f5a966f4078ee75867fc16e30b78054897112daefd28c962",
+		//"011e629d88fc8b6b948e14daee5324379ce6fcd2f8f99a458bfe200644e1a7bc01",
+		//"0123df72ea015ba6437e1c754fd64bd2dde837757726f4f7727b74d75c2e5da5be",
+		//"01252b6dffd11ab2961f12043c689d0219e350f3b4652feaa083d33163345521b8",
+		//"0126c600689ce0ec3d292191c33ce05b613c078d55f3d5fbdaf7b7c8a9405035fe",
+		//"015e7896dc0c2de1e42ae5d72e54ea889b5b6e28fb2c670858e2fe54b99f8d540e",
+		//"017a90721e3bcc9b1137bccdaaad059584c20f9a0bb67bc6e43edafb8352c59b83",
+		//"01a01f6189f4ca05dcf828eabf3febfbf5cda0be5fd5240fc6910d2073e47e074c",
+		//"01a1d64e35e759ef5c3724aa5c286d0913875eeb052e9308cada858d63d6e7cbee",
+		//"01c86f1593e2123a7397e4c27b9d376a9c9704522590b46b4bee26ccddeda0a3d5",
+
+		"0196377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475",
 	}
 
 	tm := testInitWalletManager()
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
-	accountID := "4A8vP41Hh6zqYrcMB4dyx28W2PgzBKQitVrJoEp5iUtZ"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
+	accountID := "5bjerWYdMiSP8t6guHhu96X9XFCP8S6hDQJRCnJbzEh7"
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
 	for _, to := range addrs {
 
-		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "2.5", "", nil)
+		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "3.5", "", nil)
 		if err != nil {
 			return
 		}
@@ -163,15 +165,15 @@ func TestTransfer(t *testing.T) {
 
 func TestSummary(t *testing.T) {
 	tm := testInitWalletManager()
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
-	accountID := "JCw25nu4iBUwJopheg1ynp5sH7Wu4tRWxstWAfpaECMR"
-	summaryAddress := "8543cf28d54200d36842679074575ef714d5562341b8a59f0d63ad4465c11365"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
+	accountID := "GYtwYMnxxAPhuAasvpRmy8DrJcdipAn84w1NvyYBtK1N"
+	summaryAddress := "01538a824321867eebcf8506a5dc109f6cdf8abe340f2472c12d9015f24c83614c"
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
 	rawTxArray, err := testCreateSummaryTransactionStep(tm, walletID, accountID,
 		summaryAddress, "", "", "",
-		0, 10, nil)
+		0, 100, nil)
 	if err != nil {
 		log.Errorf("CreateSummaryTransaction failed, unexpected error: %v", err)
 		return

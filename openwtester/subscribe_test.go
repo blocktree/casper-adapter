@@ -62,16 +62,13 @@ func TestSubscribeAddress(t *testing.T) {
 	var (
 		endRunning = make(chan bool, 1)
 		symbol     = "CSPR"
-		addrs      = map[string]string{
-			"8543cf28d54200d36842679074575ef714d5562341b8a59f0d63ad4465c11365": "sender",
-			"f94cb9f36ca75e37b21bc5292dd23f9b5839f3b1b15a11d60732c9282aec7297": "receiver",
-		}
 	)
+
+	tm := testInitWalletManager()
 
 	// 获取地址对应的数据源标识
 	scanTargetFunc := func(target openwallet.ScanTargetParam) openwallet.ScanTargetResult {
-		sourceKey, ok := addrs[target.ScanTarget]
-		return openwallet.ScanTargetResult{SourceKey: sourceKey, Exist: ok, TargetInfo: nil,}
+		return testScanAddress(target, tm)
 	}
 
 	assetsMgr, err := openw.GetAssetsAdapter(symbol)
@@ -108,7 +105,7 @@ func TestSubscribeAddress(t *testing.T) {
 		scanner.SetBlockchainDAI(dai)
 	}
 
-	//scanner.SetRescanBlockHeight(29565)
+	scanner.SetRescanBlockHeight(20859)
 
 	if scanner == nil {
 		log.Error(symbol, "is not support block scan")
@@ -123,4 +120,30 @@ func TestSubscribeAddress(t *testing.T) {
 	scanner.Run()
 
 	<-endRunning
+}
+
+func testScanAddress(target openwallet.ScanTargetParam, tm *openw.WalletManager) openwallet.ScanTargetResult {
+
+	if target.ScanTargetType != openwallet.ScanTargetTypeAddressMemo {
+		return openwallet.ScanTargetResult{Exist: false}
+	}
+
+	// memo(account hash) => address
+	record := make(map[string]string)
+	record["a427a36e256360611433e20fb9cbd8a5ea7a21cfd4673a3776748581d312482d"] = "01538a824321867eebcf8506a5dc109f6cdf8abe340f2472c12d9015f24c83614c"
+	record["566623e3db33804cf56bda2cbe6d1a9c0e64c34fde8c43f9229fe81500f5e34d"] = "0114dad099b351fad3f5a966f4078ee75867fc16e30b78054897112daefd28c962"
+	record["9cc6dc915ff164a49e8df6781ad1efb4d6ee0592b49ec74a50b7e3655aa3487f"] = "0196377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475"
+
+	addr, err := tm.GetAddress(testApp, "", "", record[target.ScanTarget])
+	if err != nil {
+		return openwallet.ScanTargetResult{Exist: false}
+	}
+
+	result := openwallet.ScanTargetResult{
+		SourceKey:  addr.AccountID,
+		Exist:      true,
+		TargetInfo: addr,
+	}
+
+	return result
 }

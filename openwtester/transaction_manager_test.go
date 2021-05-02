@@ -27,9 +27,9 @@ import (
 
 func TestWalletManager_GetAssetsAccountBalance(t *testing.T) {
 	tm := testInitWalletManager()
-	walletID := "VyYqut5xajQFAveg9NS61EUFzMw9CwiPcF"
-	accountID := "4A8vP41Hh6zqYrcMB4dyx28W2PgzBKQitVrJoEp5iUtZ"
-	//accountID := "JCw25nu4iBUwJopheg1ynp5sH7Wu4tRWxstWAfpaECMR"
+	walletID := "W86nWchZDQ5e8KtzfWTSQPqaVysu68kLhN"
+	accountID := "5bjerWYdMiSP8t6guHhu96X9XFCP8S6hDQJRCnJbzEh7"
+	//accountID := "GYtwYMnxxAPhuAasvpRmy8DrJcdipAn84w1NvyYBtK1N"
 	balance, err := tm.GetAssetsAccountBalance(testApp, walletID, accountID)
 	if err != nil {
 		log.Error("GetAssetsAccountBalance failed, unexpected error:", err)
@@ -71,10 +71,10 @@ func TestGetAddressVerify(t *testing.T) {
 	flag := addrDec.AddressVerify("0x4402a2969da0689a0e6f5fbad8be930430b4ad63af25f3c93dbd03bb40908d08")
 	log.Infof("flag: %v, expect: false", flag)
 
-	flag = addrDec.AddressVerify("6541a59bd17cf20f058e8b5377f034a32843410f")
+	flag = addrDec.AddressVerify("96377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475")
 	log.Infof("flag: %v, expect: false", flag)
 
-	flag = addrDec.AddressVerify("96377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475")
+	flag = addrDec.AddressVerify("0196377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475")
 	log.Infof("flag: %v, expect: true", flag)
 
 }

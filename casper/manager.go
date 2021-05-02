@@ -17,7 +17,6 @@ package casper
 
 import (
 	"encoding/hex"
-	"github.com/blocktree/casper-adapter/casper_addrdec"
 	"github.com/blocktree/go-owcrypt"
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openwallet"
@@ -44,7 +43,7 @@ func NewWalletManager() *WalletManager {
 	wm := WalletManager{}
 	wm.Config = NewConfig(Symbol)
 	//wm.Decoder = NewAddressDecoder(&wm)
-	wm.DecoderV2 = &casper_addrdec.Default
+	wm.DecoderV2 = &AddressDecoderV2{}
 	wm.Log = log.NewOWLogger(wm.Symbol())
 	wm.Blockscanner = NewBlockScanner(&wm)
 	wm.TxDecoder = NewTransactionDecoder(&wm)
@@ -162,6 +161,27 @@ func PublicKeyToHash(publicKey string, tag uint8) string {
 		hash = append([]byte(SignatureAlgorithmSecp256K1), 0x00)
 	}
 	hash = append(hash, bytes...)
+	b2 := owcrypt.Hash(hash, 32, owcrypt.HASH_ALG_BLAKE2B)
+	return hex.EncodeToString(b2)
+}
+
+func (wm *WalletManager) AddressToHash(address string) string {
+	bytes, err := hex.DecodeString(address)
+	if err != nil {
+		return ""
+	}
+	if len(bytes) < 33 {
+		return ""
+	}
+	tag := bytes[0]
+	hash := make([]byte, 0)
+	switch tag {
+	case 0x01:
+		hash = append([]byte(SignatureAlgorithmEd25519), 0x00)
+	case 0x02:
+		hash = append([]byte(SignatureAlgorithmSecp256K1), 0x00)
+	}
+	hash = append(hash, bytes[1:]...)
 	b2 := owcrypt.Hash(hash, 32, owcrypt.HASH_ALG_BLAKE2B)
 	return hex.EncodeToString(b2)
 }

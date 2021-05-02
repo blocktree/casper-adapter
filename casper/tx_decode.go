@@ -75,7 +75,7 @@ func (decoder *TransactionDecoder) CreateRawTransaction(wrapper openwallet.Walle
 
 	for _, addr := range addresses {
 
-		balance, err := decoder.wm.GetAccountBalance(stateRootHash, addr.Address)
+		balance, err := decoder.wm.GetAccountBalance(stateRootHash, decoder.wm.AddressToHash(addr.Address))
 		if err != nil {
 			continue
 		}
@@ -277,7 +277,7 @@ func (decoder *TransactionDecoder) CreateSummaryRawTransaction(wrapper openwalle
 
 	for _, addr := range addresses {
 
-		balance, err := decoder.wm.GetAccountBalance(stateRootHash, addr.Address)
+		balance, err := decoder.wm.GetAccountBalance(stateRootHash, decoder.wm.AddressToHash(addr.Address))
 		if err != nil {
 			continue
 		}
@@ -353,6 +353,11 @@ func (decoder *TransactionDecoder) createRawTransaction(
 		break
 	}
 
+	accHash := decoder.wm.AddressToHash(destination)
+	if len(accHash) == 0 {
+		return fmt.Errorf("transfer target address is invalid. ")
+	}
+
 	//计算账户的实际转账amount
 	accountTotalSentAddresses, findErr := wrapper.GetAddressList(0, -1, "AccountID", rawTx.Account.AccountID, "Address", destination)
 	if findErr != nil || len(accountTotalSentAddresses) == 0 {
@@ -366,7 +371,7 @@ func (decoder *TransactionDecoder) createRawTransaction(
 	fee := decoder.wm.Config.MinFees.Shift(decimals)
 	sendAmount, _ := decimal.NewFromString(amountStr)
 	sendAmount = sendAmount.Shift(decimals)
-	tx, err := decoder.wm.MakeTransferDeploy(addrBalance.PublicKey, destination, sendAmount.String(), fee.String(), "1", 0)
+	tx, err := decoder.wm.MakeTransferDeploy(addrBalance.PublicKey, accHash, sendAmount.String(), fee.String(), "1", 0)
 	if err != nil {
 		return err
 	}
