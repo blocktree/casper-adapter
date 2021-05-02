@@ -24,7 +24,7 @@ import (
 
 //FullName 币种全名
 func (wm *WalletManager) FullName() string {
-	return "metaverse"
+	return "Casper"
 }
 
 //CurveType 曲线类型
