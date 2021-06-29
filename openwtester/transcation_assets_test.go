@@ -130,7 +130,7 @@ func TestTransfer(t *testing.T) {
 		//"01a1d64e35e759ef5c3724aa5c286d0913875eeb052e9308cada858d63d6e7cbee",
 		//"01c86f1593e2123a7397e4c27b9d376a9c9704522590b46b4bee26ccddeda0a3d5",
 
-		"0196377909058287e15ae2a3df5b77dc0abcd41136bdf8f919d5ffb412777ae475",
+		"01dca38c9efe06317daea1a526b36b5bd2832d71c9d69780c04f23b3a092606f91",
 	}
 
 	tm := testInitWalletManager()
@@ -141,7 +141,7 @@ func TestTransfer(t *testing.T) {
 
 	for _, to := range addrs {
 
-		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "3.5", "", nil)
+		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "15.12345", "", nil)
 		if err != nil {
 			return
 		}

@@ -3,6 +3,7 @@ package casper
 import (
 	"encoding/hex"
 	"github.com/blocktree/openwallet/v2/log"
+	"math/big"
 	"testing"
 )
 
@@ -29,5 +30,13 @@ func TestCLValue_ToBytes(t *testing.T) {
 	accHash, _ := hex.DecodeString("2326204a1658082975d08b6fbb5597fff206201447a5838ebcb9a1fd97286a11")
 	session := NewTransfer("10", accHash, "34")
 	log.Infof("Transfer Bytes: %s", hex.EncodeToString(session.ToBytes()))
+
+}
+
+func TestBigInt(t *testing.T) {
+	bit := []byte{01}
+	bigInt := new(big.Int)
+	bigInt.SetBytes(bit)
+	bigInt.Bytes()
 
 }

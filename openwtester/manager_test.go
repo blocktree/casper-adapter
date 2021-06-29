@@ -2,6 +2,7 @@ package openwtester
 
 import (
 	"fmt"
+	"github.com/blocktree/openwallet/v2/common/file"
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openw"
 	"github.com/blocktree/openwallet/v2/openwallet"
@@ -25,7 +26,28 @@ func testInitWalletManager() *openw.WalletManager {
 	tc.SupportAssets = []string{
 		"CSPR",
 	}
-	return openw.NewWalletManager(tc)
+
+	mgr := openw.NewWalletManager(tc)
+
+	assetsMgr, err := openw.GetAssetsAdapter("CSPR")
+	if err != nil {
+		log.Error("CSPR", "is not support")
+		return nil
+	}
+
+	scanner := assetsMgr.GetBlockScanner()
+
+	if scanner.SupportBlockchainDAI() {
+		file.MkdirAll(dbFilePath)
+		dai, err := openwallet.NewBlockchainLocal(filepath.Join(dbFilePath, dbFileName), false)
+		if err != nil {
+			log.Error("NewBlockchainLocal err: %v", err)
+			return nil
+		}
+
+		scanner.SetBlockchainDAI(dai)
+	}
+	return mgr
 	//tm.Init()
 }
 
