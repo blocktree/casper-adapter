@@ -141,7 +141,7 @@ func TestPublicKeyToHash(t *testing.T) {
 }
 
 func TestWalletManager_GetBlockTransfers(t *testing.T) {
-	transfers, err := tw.GetBlockTransfers(42964)
+	transfers, err := tw.GetBlockTransfers(403516)
 	if err != nil {
 		t.Errorf("GetBlockTransfers failed, err: %v", err)
 		return
@@ -181,10 +181,10 @@ func TestWalletManager_TransferDeploy(t *testing.T) {
 	}
 
 	signature := &openwallet.KeySignature{
-		EccType:   owcrypt.ECC_CURVE_ED25519,
-		Address:   &openwallet.Address{
-			Address:     PublicKeyToHash(senderKey, ED25519_TAG),
-			PublicKey:   senderKey,
+		EccType: owcrypt.ECC_CURVE_ED25519,
+		Address: &openwallet.Address{
+			Address:   PublicKeyToHash(senderKey, ED25519_TAG),
+			PublicKey: senderKey,
 		},
 		Signature: hex.EncodeToString(sig),
 	}
@@ -207,7 +207,7 @@ func TestWalletManager_TransferDeploy(t *testing.T) {
 }
 
 func TestWalletManager_GetDeployInfo(t *testing.T) {
-	_, err := tw.GetDeployInfo("7f6a4d4eb4f3bc2c1e8f424d1fa5026a1cca25092c9889b0747b8aa7b67c4f10")
+	_, err := tw.GetDeployInfo("411BcB6EC6411B51f6428DB661c04aA2bDbd6812fcd2Da286482E4c874b7BAEE")
 	if err != nil {
 		t.Errorf("GetDeployInfo failed, err: %v", err)
 		return

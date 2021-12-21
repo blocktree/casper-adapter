@@ -105,7 +105,7 @@ func TestSubscribeAddress(t *testing.T) {
 		scanner.SetBlockchainDAI(dai)
 	}
 
-	scanner.SetRescanBlockHeight(20859)
+	scanner.SetRescanBlockHeight(403516)
 
 	if scanner == nil {
 		log.Error(symbol, "is not support block scan")

@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openwallet"
+	"strings"
 	"time"
 )
 
@@ -341,8 +342,8 @@ func (bs *BlockScanner) ExtractTransaction(tx *Transfer, blockTime int64, scanTa
 	}
 
 	// 删去prefix
-	from := tx.From
-	to := tx.To
+	from := strings.ToLower(tx.From)
+	to := strings.ToLower(tx.To)
 
 	targetResult1 := scanTargetFunc(openwallet.ScanTargetParam{
 		ScanTarget:     from,
