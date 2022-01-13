@@ -206,7 +206,7 @@ func (wm *WalletManager) GetBlockTransfers(height uint64) ([]*Transfer, error) {
 				ID:          t.Get("id").String(),
 				From:        t.Get("from").String(),
 				To:          t.Get("to").String(),
-				DeployHash:  t.Get("deploy_hash").String(),
+				DeployHash:  strings.ToLower(t.Get("deploy_hash").String()),
 				Source:      t.Get("source").String(),
 				Gas:         t.Get("gas").String(),
 				BlockHeight: height,
